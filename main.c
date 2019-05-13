@@ -55,12 +55,17 @@ static const WORD k[64] = {
 char **getwords(FILE *fp, int *n);
 void free_array(char **words, int rows);
 void create_hash(BYTE text[], BYTE hash[SHA256_BLOCK_SIZE]);
+BYTE *readSHAfilePasswords();
+void ChangeStrToBYTE(char *input, BYTE *result);
 void crack_noargument(char *word);
 
 void sha256_final(SHA256_CTX *ctx, BYTE hash[]);
 void sha256_update(SHA256_CTX *ctx, const BYTE data[], size_t len);
 void sha256_init(SHA256_CTX *ctx);
-void sha256_transform(SHA256_CTX *ctx, const BYTE data[]); 
+void sha256_transform(SHA256_CTX *ctx, const BYTE data[]);
+
+int checkPasswords(BYTE *passwords, char *guess); 
+
 int main(int argc, char **argv)
 {
 
@@ -86,7 +91,6 @@ int main(int argc, char **argv)
 
 	for (i = 0; i < nwords; i++)
 	{
-		//printf("%s\n", words[i]);
 		if (argc < 2)
 		{
 			crack_noargument(words[i]);
@@ -157,6 +161,7 @@ char **getwords(FILE *fp, int *n)
 	return words;
 }
 
+
 void free_array(char **words, int rows)
 {
 
@@ -168,6 +173,7 @@ void free_array(char **words, int rows)
 	free(words);
 }
 
+//create hash representation for BYTE array
 void create_hash(BYTE text[], BYTE hash[SHA256_BLOCK_SIZE])
 {
 	SHA256_CTX ctx;
@@ -177,13 +183,13 @@ void create_hash(BYTE text[], BYTE hash[SHA256_BLOCK_SIZE])
 	sha256_final(&ctx, hash);
 }
 
-void crack_noargument(char *word)
-{
-	BYTE text[] = {word};
-	BYTE hash[SHA256_BLOCK_SIZE];
-	create_hash(text, hash);
+//read file containing SHA Passwords and returns the bite array
+BYTE* readSHAfilePasswords(){
+	FILE *dictionary;
+	long dictionarysize;
+	BYTE *listofHashes;
 
-	FILE *dictionary = fopen("pwd4sha256", "rb");
+	dictionary = fopen("pwd4sha256", "rb");
 	if (!dictionary)
 	{ /* validate file open */
 		fprintf(stderr, "error: hash file open failed.\n");
@@ -191,17 +197,75 @@ void crack_noargument(char *word)
 	}
 
 	fseek(dictionary, 0, SEEK_END);
-	long dictionarysize = ftell(dictionary);
-	rewind(dictionary); 
+	dictionarysize = ftell(dictionary);
+	rewind(dictionary);
 
-	char *string = (char *)malloc((dictionarysize * 4) * sizeof(char));
-	fread(string, dictionarysize, 1, dictionary);
+	listofHashes = (BYTE *)malloc((dictionarysize * 4) * sizeof(BYTE));
+	fread(listofHashes, dictionarysize, 1, dictionary);
 	fclose(dictionary);
 
-	string[dictionarysize] = '\0';
-
-	for 
+	return listofHashes;
 }
+
+void ChangeStrToBYTE(char *input, BYTE *result)
+{
+	int j = 0;
+	int i=0;
+
+	while (input[j] != '\0')
+	{
+		result[i++] = input[j++];
+	}
+}
+
+
+//checks if guess in passwords and returns the index if it is
+int checkPasswords(BYTE *passwords, char *guess)
+{
+
+	//convert word to BYTE string
+	int len = strlen(guess);
+	BYTE guessBYTE[len];
+	ChangeStrToBYTE(guess, guessBYTE);
+
+	//create hash for guess
+	BYTE guessHash[32];
+	create_hash(guessBYTE, guessHash);
+
+	//check if guess in passwords
+	//adapted from https://stackoverflow.com/questions/27490488/copying-part-of-an-array-into-another-variable
+	for (int i = 0; i < 288; i++)
+	{
+		int sz = 32; // number of characters to copy
+
+		BYTE check[sz + 1];
+		int from = i; // here from is where you start to copy
+
+		strncpy(check, passwords + from, sz);
+		if (memcmp(check, guessHash, 32) == 0)
+		{
+			return i / 32;
+		}
+	}
+
+	return -1;
+}
+
+
+
+void crack_noargument(char *word)
+{
+	BYTE *passwords;
+	passwords = readSHAfilePasswords();
+
+	if (checkPasswords(passwords, word) != -1){
+		printf("%s\n", word);
+		printf("%d\n", checkPasswords(passwords, word));
+	}
+		
+}
+
+
 
 /*********************** FUNCTION DEFINITIONS ***********************/
 void sha256_transform(SHA256_CTX *ctx, const BYTE data[])
