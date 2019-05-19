@@ -19,7 +19,6 @@
 #define PASSWORD_LEN_SIX_LETTER 6
 #define PASSWORD_LEN_FOUR_LETTER 4
 #define PASSWORD_LEN_SIX_LETTER 6
-
 //create hash representation for BYTE array
 void create_hash(BYTE text[], BYTE hash[SHA256_BLOCK_SIZE], int lenght)
 {
@@ -30,19 +29,7 @@ void create_hash(BYTE text[], BYTE hash[SHA256_BLOCK_SIZE], int lenght)
 	sha256_final(&ctx, hash);
 }
 
-/*unsigned char (*)[32] read_passwords_hashes(char *filename, int lenght)
-{
-	unsigned char passwords[lenght][SHA256_BLOCK_SIZE];
-	FILE *pwd_file = fopen(filename, "rb");
-	for (int i = 0; i < lenght; i++)
-	{
-		fread(passwords[i], sizeof(passwords[i]), 1, pwd_file);
-	}
-
-	return passwords;
-}*/
-
-void four_letter_pwd_creator(char *curr_guess, unsigned char **four_letter_hashed_passwords)
+void four_letter_pwd_creator(char *curr_guess, unsigned char four_letter_hashed_passwords[NUM_FOUR_LETTERS_PASSWORDS][SHA256_BLOCK_SIZE])
 {
 	int flag = 1;
 	int countPasswords = 0;
@@ -95,13 +82,16 @@ void four_letter_pwd_creator(char *curr_guess, unsigned char **four_letter_hashe
 	}
 }
 
-void six_letter_pwd_creator(char *curr_guess, unsigned char **six_letter_hashed_passwords)
+void six_letter_pwd_creator(char *curr_guess, unsigned char six_letter_hashed_passwords[NUM_SIX_LETTERS_PASSWORDS][SHA256_BLOCK_SIZE])
 {
 	int flag = 1;
 	int countPasswords = 0;
 	// 6-letters passwords: Brute Force
+	
 	for (int i = 48; i <= 122 && flag == 1; i++)
 	{
+		//48-57 are number 0-9
+		//91-96 are [ / ] ^ _ '
 		if ((i >= 58 && i <= 64) || (i >= 91 && i <= 96) || (i >= 123 && i <= 126))
 		{
 			continue;

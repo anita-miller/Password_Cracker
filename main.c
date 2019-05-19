@@ -21,18 +21,17 @@ int main(int argc, char **argv)
 		crack_noargument();
 	}
 
-	/*
 	// Part 2: one argument to crack.exe
 	else if (argc == 2)
 	{
-			crack_twoargument(argv[1]);
+		crack_oneargument(argv[1]);
 	}
 
 	// Part 3: three arguments to crack.exe	
 	else if (argc == 3)
 	{
-			crack_threeargument(argv[1], argv[2]);
-	}*/
+		crack_twoargument(argv[1], argv[2]);
+	}
 	else
 	{
 		perror("can not accept 3 inputs");

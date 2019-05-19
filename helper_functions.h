@@ -7,15 +7,15 @@
 
 #include <stdio.h>
 #include "sha256.h"
+#define SHA256_BLOCK_SIZE 32
+#define NUM_SIX_LETTERS_PASSWORDS 20
+#define NUM_FOUR_LETTERS_PASSWORDS 10
+
 //create hash representation for BYTE array
 void create_hash(BYTE text[], BYTE hash[SHA256_BLOCK_SIZE], int lenght);
 
-//read hashes of passwords into a char** from a file
-//unsigned char (*)[32] read_passwords_hashes(char *filename, int lenght);
+void four_letter_pwd_creator(char *curr_guess, unsigned char four_letter_hashed_passwords[NUM_FOUR_LETTERS_PASSWORDS][SHA256_BLOCK_SIZE]);
 
-void four_letter_pwd_creator(char *curr_guess, unsigned char **four_letter_hashed_passwords);
-
-void six_letter_pwd_creator(char *curr_guess, unsigned char **six_letter_hashed_passwords);
-
+void six_letter_pwd_creator(char *curr_guess, unsigned char six_letter_hashed_passwords[NUM_SIX_LETTERS_PASSWORDS][SHA256_BLOCK_SIZE]);
 
 #endif
