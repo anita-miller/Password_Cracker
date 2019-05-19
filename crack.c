@@ -30,75 +30,24 @@
 
 void crack_noargument()
 {
-	int countPasswords = 0;
-	int flag = 1;
+
 	char curr_guess[MAX_WORD_LEN];
-
 	unsigned char four_letter_hashed_passwords[NUM_FOUR_LETTERS_PASSWORDS][SHA256_BLOCK_SIZE];
-	//unsigned char six_letter_hashed_passwords[NUM_SIX_LETTERS_PASSWORDS][SHA256_BLOCK_SIZE];
+	unsigned char six_letter_hashed_passwords[NUM_SIX_LETTERS_PASSWORDS][SHA256_BLOCK_SIZE];
 
-	FILE *pwd4sha256 = fopen("pwd4sha256", "rb");
+	FILE *pwd4sha256 = fopen(PASSWORD_FILE_FOURWORDS, "rb");
 	for (int i = 0; i < NUM_FOUR_LETTERS_PASSWORDS; i++)
 	{
 		fread(four_letter_hashed_passwords[i], sizeof(four_letter_hashed_passwords[i]), 1, pwd4sha256);
 	}
 	// Store the binary file as an array of hex values (for 6-chars passwords)
-	/*FILE *pwd6sha256 = fopen(PASSWORD_FILE_SIXWORDS, "rb");
+	FILE *pwd6sha256 = fopen(PASSWORD_FILE_SIXWORDS, "rb");
 	for (int i = 0; i < NUM_SIX_LETTERS_PASSWORDS; i++)
 	{
 		fread(six_letter_hashed_passwords[i], sizeof(six_letter_hashed_passwords[i]), 1, pwd6sha256);
-	}*/
-
-	//four_letter_pwd_creator(curr_guess, four_letter_hashed_passwords);
-	
-	
-	// 4-letters passwords: Brute Force
-	for (int i = 32; i <= 126 && flag == 1; i++)
-	{
-		for (int j = 32; j <= 126 && flag == 1; j++)
-		{
-			for (int n = 32; n <= 126 && flag == 1; n++)
-			{
-				for (int m = 32; m <= 126 && flag == 1; m++)
-				{
-					curr_guess[0] = i;
-					curr_guess[1] = j;
-					curr_guess[2] = n;
-					curr_guess[3] = m;
-					curr_guess[4] = '\0';
-
-					//create hash for guess
-					BYTE curr_guessHash[SHA256_BLOCK_SIZE];
-					create_hash((BYTE *)curr_guess, curr_guessHash, PASSWORD_LEN_FOUR_LETTER);
-
-					// Compare the hash to the array of hash (result is an 1d array of hex and hashed_passwords is a 2d array of hashes)
-					for (int i = 0; i < NUM_FOUR_LETTERS_PASSWORDS; i++)
-					{
-						int matchedHashes = 0;
-						// for every hex
-						for (int j = 0; j < SHA256_BLOCK_SIZE; j++)
-						{
-							if (four_letter_hashed_passwords[i][j] == curr_guessHash[j])
-							{
-								matchedHashes++;
-							}
-						}
-						// password found
-						if (matchedHashes == SHA256_BLOCK_SIZE)
-						{
-							printf("%s %d\n", curr_guess, i + 1);
-							countPasswords++;
-							break;
-						}
-					}
-					if (countPasswords == NUM_FOUR_LETTERS_PASSWORDS)
-					{
-						flag = 0;
-					}
-				}
-			}
-		}
 	}
+
+	four_letter_pwd_creator(curr_guess, four_letter_hashed_passwords);
 	//six_letter_pwd_creator(curr_guess, six_letter_hashed_passwords);
 }
 /*
@@ -238,7 +187,7 @@ void crack_oneargument(int number_guesses)
 	}
 	fclose(COMMON_PASSWORDS);
 }
-
+*/
 void crack_twoargument(char *guesses_file, char *hashes_file)
 {
 
@@ -253,7 +202,7 @@ void crack_twoargument(char *guesses_file, char *hashes_file)
 	inputFile_guesses = fopen(guesses_file, "r");
 	inputFile_hashes = fopen(hashes_file, "rb");
 
-	// validate file open 
+	/* validate file open */
 	if (!inputFile_hashes || !inputFile_guesses)
 	{
 		fprintf(stderr, "error: file open failed.\n");
@@ -305,4 +254,3 @@ void crack_twoargument(char *guesses_file, char *hashes_file)
 	fclose(inputFile_guesses);
 	fclose(inputFile_hashes);
 }
-*/
