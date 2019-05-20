@@ -170,3 +170,32 @@ void six_letter_pwd_creator(char *curr_guess, unsigned char six_letter_hashed_pa
 		}
 	}
 }
+
+char *create_rand_num()
+{
+	char word[MAX_WORD_LEN];
+	// We will generate a random 6 digit number
+	for (int i = 0; i < PASSWORD_LEN_SIX_LETTER; i++)
+	{
+		word[i] = 48 + rand() % 10;
+	}
+	word[PASSWORD_LEN_SIX_LETTER] = '\0';
+
+	return word;
+}
+
+int read_word_dict(FILE *db, char *word, int count)
+{
+	// We will go through the dictionary one by one
+	for (int a = 0; a < count; a++)
+	{
+		// This for-loop reads and discards the words that has already been read
+		fgets(word, MAX_WORD_LEN, db);
+	}
+	fgets(word, MAX_WORD_LEN, db);
+
+	printf("%s\n", word);
+	count++;
+
+	return count;
+}

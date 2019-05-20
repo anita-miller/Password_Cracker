@@ -40,30 +40,6 @@ static const char *DB_1000_VERBS_UPPER = "6_letters/verbs_1000_upper.csv";
 static const char *DB_1000_ADJEC_LOWER = "6_letters/adj_1000_lower.csv";
 static const char *DB_1000_ADJEC_UPPER = "6_letters/adj_1000_upper.csv";
 
-char* create_rand_num(){
-	char word[MAX_WORD_LEN];
-	// We will generate a random 6 digit number
-	for (int i = 0; i < PASSWORD_LEN_SIX_LETTER; i++)
-	{
-		word[i] = 48 + rand() % 10;
-	}
-	word[PASSWORD_LEN_SIX_LETTER] = '\0';
-
-	return word;
-}
-
-void read_word_dict(FILE* db, char* word, int count){
-	// We will go through the dictionary one by one
-	for (int a = 0; a < count; a++)
-	{
-		// This for-loop reads and discards the words that has already been read
-		fgets(word, MAX_WORD_LEN, db);
-	}
-	fgets(word, MAX_WORD_LEN, db);
-
-	printf("%s\n", word);
-	count++;
-}
 
 void crack_noargument()
 {
@@ -131,30 +107,30 @@ void crack_oneargument(int number_guesses)
 	FILE *dictionary_nouns_upper = fopen(DB_1000_NOUNS_UPPER, "r");
 	FILE *dictionary_verbs_lower = fopen(DB_000_VERBS_LOWER, "r");
 	FILE *dictionary_verbs_upper = fopen(DB_1000_VERBS_UPPER, "r");
-	FILE *dictionary_adjec_lower = fopen(DB_1000_ADJEC_LOWER, "r");
-	FILE *dictionary_adjec_upper = fopen(DB_1000_ADJEC_UPPER, "r");
+	FILE *dictionary_adj_lower = fopen(DB_1000_ADJEC_LOWER, "r");
+	FILE *dictionary_adj_upper = fopen(DB_1000_ADJEC_UPPER, "r");
 	// Constants
 	time_t seed_of_seed;
 	srand((unsigned)time(&seed_of_seed));
 	int seed = rand();
-
 	srand((unsigned)seed);
-	int case2a_counter = 0;
-	int case2b_counter = 0;
-	int case3_counter = 0;
-	int case4a_counter = 0;
-	int case4b_counter = 0;
-	int case5a_counter = 0;
-	int case5b_counter = 0;
-	int case6_counter = 0;
-	int case7a_counter = 0;
-	int case7b_counter = 0;
 
+	int name_male_lower_counter = 0;
+	int name_female_lower_counter = 0;
+	int nouns_lower_counter = 0;
+	int verbs_lower_counter = 0;
+	int adj_lower_counter = 0;
+	int name_male_upper_counter = 0;
+	int name_female_upper_counter = 0;
+	int nouns_upper_counter = 0;
+	int verbs_upper_counter = 0;
+	int adj_upper_counter = 0;
+
+	// To randomise the order of guesses, we have 12 cases and each case is
+	// weighted differently (see Algorithm_plan.txt for detail). Based on passwords in pwd4sha256,
+	// combination of lower case nouns are very popular, therefore has a higher weight.
 	for (int i = 0; i < number_guesses; i++)
 	{
-		// To randomise the order of guesses, we have 12 cases and each case is
-		// weighted differently (see Algorithm_plan.txt for detail). From observation of pwd4sha256, numerical
-		// password is very popular, therefore has a higher weight.
 		// This randomisation is achieved by a random number ranging 0-99 (used as percentage)
 		int percentage = rand() % 100;
 
@@ -171,65 +147,64 @@ void crack_oneargument(int number_guesses)
 		else if (percentage >= 25 && percentage < 32)
 		{
 			// We will go through the dictionary one by one
-			read_word_dict(dictionary_name_male_lower, current_word, case2a_counter);
-
+			name_male_lower_counter = read_word_dict(dictionary_name_male_lower, current_word, name_male_lower_counter);
 		}
+
 		else if (percentage >= 32 && percentage < 40)
 		{	
 			// We will go through the dictionary one by one
-			read_word_dict(dictionary_name_female_lower, current_word, case2b_counter);
-	
+			name_female_lower_counter = read_word_dict(dictionary_name_female_lower, current_word, name_female_lower_counter);
 		}
 
 		// Case 3: Nouns Lowercase - 15%
 		else if (percentage >= 40 && percentage < 55)
 		{
 			// We will go through the dictionary one by one
-			read_word_dict(dictionary_nouns_lower, current_word, case3_counter);
+			nouns_lower_counter = read_word_dict(dictionary_nouns_lower, current_word, nouns_lower_counter);
 		}
 
 		// Case 4: Other dictionary words Lowercase - 8%
 		else if (percentage >= 55 && percentage < 59)
 		{
 			// We will go through the dictionary one by one
-			read_word_dict(dictionary_verbs_lower, current_word, case4a_counter);
+			verbs_lower_counter = read_word_dict(dictionary_verbs_lower, current_word, verbs_lower_counter);
 		}
 		else if (percentage >= 59 && percentage < 63)
 		{
 			// We will go through the dictionary one by one
-			read_word_dict(dictionary_adjec_lower, current_word, case4b_counter);
+			adj_lower_counter = read_word_dict(dictionary_adj_lower, current_word, adj_lower_counter);
 		}
 
 		// Case 5: Names Uppercase - 8%
 		else if (percentage >= 63 && percentage < 67)
 		{
 			// We will go through the dictionary one by one
-			read_word_dict(dictionary_name_male_upper, current_word, case5a_counter);
+			name_male_upper_counter = read_word_dict(dictionary_name_male_upper, current_word, name_male_upper_counter);
 		}
 
 		else if (percentage >= 67 && percentage < 71)
 		{
 			// We will go through the dictionary one by one
-			read_word_dict(dictionary_name_female_upper, current_word, case5b_counter);
+			name_female_upper_counter = read_word_dict(dictionary_name_female_upper, current_word, name_female_upper_counter);
 		}
 
 		// Case 6: Nouns Uppercase - 7%
 		else if (percentage >= 71 && percentage < 78)
 		{
 			// We will go through the dictionary one by one
-			read_word_dict(dictionary_nouns_upper, current_word, case6_counter);
+			nouns_upper_counter = read_word_dict(dictionary_nouns_upper, current_word, nouns_upper_counter);
 		}
 
 		// Case 7: Other dictionary words Uppercase - 7%
 		else if (percentage >= 78 && percentage < 81)
 		{
 			// We will go through the dictionary one by one
-			read_word_dict(dictionary_verbs_upper, current_word, case7a_counter);
+			verbs_upper_counter = read_word_dict(dictionary_verbs_upper, current_word, verbs_upper_counter);
 		}
 		else if (percentage >= 81 && percentage < 85)
 		{
 			// We will go through the dictionary one by one
-			read_word_dict(dictionary_adjec_upper, current_word, case7b_counter);
+			adj_upper_counter = read_word_dict(dictionary_adj_upper, current_word, adj_upper_counter);
 		}
 
 		/* Dictionary Attack finished, try brute force with randomised */
