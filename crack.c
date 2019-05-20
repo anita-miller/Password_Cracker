@@ -28,17 +28,42 @@
 #define COMMON_PASSWORDS "common_passwords.txt"
 #define NUM_4_LETTERS_PASSWORDS 10
 
-static const char *DATABASE_COMMON_PASSWORDS = "6_letters/database_common_passwords.txt";
-static const char *DATABASE_NAMES_MALE_LOWER = "6_letters/database_sixLetter_names_male_lower.txt";
-static const char *DATABASE_NAMES_MALE_UPPER = "6_letters/database_sixLetter_names_male_upper.txt";
-static const char *DATABASE_NAMES_FEMALE_LOWER = "6_letters/database_sixLetter_names_female_lower.txt";
-static const char *DATABASE_NAMES_FEMALE_UPPER = "6_letters/database_sixLetter_names_female_upper";
-static const char *DATABASE_1000_NOUNS_LOWER = "6_letters/database_sixLetter_nouns_1000_lower.csv";
-static const char *DATABASE_1000_NOUNS_UPPER = "6_letters/database_sixLetter_nouns_1000_upper.csv";
-static const char *DATABASE_1000_VERBS_LOWER = "6_letters/database_sixLetter_verbs_1000_lower.csv";
-static const char *DATABASE_1000_VERBS_UPPER = "6_letters/database_sixLetter_verbs_1000_upper.csv";
-static const char *DATABASE_1000_ADJEC_LOWER = "6_letters/database_sixLetter_adjectives_1000_lower.csv";
-static const char *DATABASE_1000_ADJEC_UPPER = "6_letters/database_sixLetter_adjectives_1000_upper.csv";
+static const char *DB_COMMON_PASSWORDS = "6_letters/common_passwords.txt";
+static const char *DB_NAMES_MALE_LOWER = "6_letters/names_m_lower.txt";
+static const char *DB_NAMES_MALE_UPPER = "6_letters/names_m_lupper.txt";
+static const char *DB_NAMES_FEMALE_LOWER = "6_letters/names_f_lower.txt";
+static const char *DB_NAMES_FEMALE_UPPER = "6_letters/names_f_upper";
+static const char *DB_1000_NOUNS_LOWER = "6_letters/nouns_1000_lower.csv";
+static const char *DB_1000_NOUNS_UPPER = "6_letters/nouns_1000_upper.csv";
+static const char *DB_000_VERBS_LOWER = "6_letters/verbs_1000_lower.csv";
+static const char *DB_1000_VERBS_UPPER = "6_letters/verbs_1000_upper.csv";
+static const char *DB_1000_ADJEC_LOWER = "6_letters/adj_1000_lower.csv";
+static const char *DB_1000_ADJEC_UPPER = "6_letters/adj_1000_upper.csv";
+
+char* create_rand_num(){
+	char word[MAX_WORD_LEN];
+	// We will generate a random 6 digit number
+	for (int i = 0; i < PASSWORD_LEN_SIX_LETTER; i++)
+	{
+		word[i] = 48 + rand() % 10;
+	}
+	word[PASSWORD_LEN_SIX_LETTER] = '\0';
+
+	return word;
+}
+
+void read_word_dict(FILE* db, char* word, int count){
+	// We will go through the dictionary one by one
+	for (int a = 0; a < count; a++)
+	{
+		// This for-loop reads and discards the words that has already been read
+		fgets(word, MAX_WORD_LEN, db);
+	}
+	fgets(word, MAX_WORD_LEN, db);
+
+	printf("%s\n", word);
+	count++;
+}
 
 void crack_noargument()
 {
@@ -78,7 +103,7 @@ void crack_oneargument(int number_guesses)
 
 	/* Dictionary Attack Part */
 	// First thing first is a dictionary of common passwords
-	FILE *dictionary_common_passwords = fopen(DATABASE_COMMON_PASSWORDS, "r");
+	FILE *dictionary_common_passwords = fopen(DB_COMMON_PASSWORDS, "r");
 	while (fgets(current_word, MAX_WORD_LEN, dictionary_common_passwords))
 	{
 		// Filter 6-letters passwords
@@ -98,20 +123,21 @@ void crack_oneargument(int number_guesses)
 		}
 	}
 	// Then it's the Weighted Dictionary Attack
-	FILE *dictionary_name_male_lower = fopen(DATABASE_NAMES_MALE_LOWER, "r");
-	FILE *dictionary_name_male_upper = fopen(DATABASE_NAMES_MALE_UPPER, "r");
-	FILE *dictionary_name_female_lower = fopen(DATABASE_NAMES_FEMALE_LOWER, "r");
-	FILE *dictionary_name_female_upper = fopen(DATABASE_NAMES_FEMALE_UPPER, "r");
-	FILE *dictionary_nouns_lower = fopen(DATABASE_1000_NOUNS_LOWER, "r");
-	FILE *dictionary_nouns_upper = fopen(DATABASE_1000_NOUNS_UPPER, "r");
-	FILE *dictionary_verbs_lower = fopen(DATABASE_1000_VERBS_LOWER, "r");
-	FILE *dictionary_verbs_upper = fopen(DATABASE_1000_VERBS_UPPER, "r");
-	FILE *dictionary_adjec_lower = fopen(DATABASE_1000_ADJEC_LOWER, "r");
-	FILE *dictionary_adjec_upper = fopen(DATABASE_1000_ADJEC_UPPER, "r");
+	FILE *dictionary_name_male_lower = fopen(DB_NAMES_MALE_LOWER, "r");
+	FILE *dictionary_name_male_upper = fopen(DB_NAMES_MALE_UPPER, "r");
+	FILE *dictionary_name_female_lower = fopen(DB_NAMES_FEMALE_LOWER, "r");
+	FILE *dictionary_name_female_upper = fopen(DB_NAMES_FEMALE_UPPER, "r");
+	FILE *dictionary_nouns_lower = fopen(DB_1000_NOUNS_LOWER, "r");
+	FILE *dictionary_nouns_upper = fopen(DB_1000_NOUNS_UPPER, "r");
+	FILE *dictionary_verbs_lower = fopen(DB_000_VERBS_LOWER, "r");
+	FILE *dictionary_verbs_upper = fopen(DB_1000_VERBS_UPPER, "r");
+	FILE *dictionary_adjec_lower = fopen(DB_1000_ADJEC_LOWER, "r");
+	FILE *dictionary_adjec_upper = fopen(DB_1000_ADJEC_UPPER, "r");
 	// Constants
 	time_t seed_of_seed;
 	srand((unsigned)time(&seed_of_seed));
 	int seed = rand();
+
 	srand((unsigned)seed);
 	int case2a_counter = 0;
 	int case2b_counter = 0;
@@ -136,11 +162,8 @@ void crack_oneargument(int number_guesses)
 		if (percentage >= 0 && percentage < 25)
 		{
 			// We will generate a random 6 digit number
-			for (int letter_count = 0; letter_count < PASSWORD_LEN_SIX_LETTER; letter_count++)
-			{
-				current_word[letter_count] = 48 + rand() % 10;
-			}
-			current_word[PASSWORD_LEN_SIX_LETTER] = '\0';
+			current_word = create_rand_num();
+				
 			printf("%s\n", current_word);
 		}
 
@@ -148,142 +171,65 @@ void crack_oneargument(int number_guesses)
 		else if (percentage >= 25 && percentage < 32)
 		{
 			// We will go through the dictionary one by one
-			for (int a = 0; a < case2a_counter; a++)
-			{
-				// This for-loop reads and discards the words that has already been read
-				fgets(current_word, MAX_WORD_LEN, dictionary_name_male_lower);
-			}
-			fgets(current_word, MAX_WORD_LEN, dictionary_name_male_lower);
+			read_word_dict(dictionary_name_male_lower, current_word, case2a_counter);
 
-			printf("%s\n", current_word);
-			case2a_counter++;
 		}
 		else if (percentage >= 32 && percentage < 40)
-		{
+		{	
 			// We will go through the dictionary one by one
-			for (int a = 0; a < case2b_counter; a++)
-			{
-				// This for-loop reads and discards the words that has already been read
-				fgets(current_word, MAX_WORD_LEN, dictionary_name_female_lower);
-			}
-			fgets(current_word, MAX_WORD_LEN, dictionary_name_female_lower);
-
-			printf("%s\n", current_word);
-			case2b_counter++;
+			read_word_dict(dictionary_name_female_lower, current_word, case2b_counter);
+	
 		}
 
 		// Case 3: Nouns Lowercase - 15%
 		else if (percentage >= 40 && percentage < 55)
 		{
 			// We will go through the dictionary one by one
-			for (int a = 0; a < case3_counter; a++)
-			{
-				// This for-loop reads and discards the words that as already been read
-				fgets(current_word, MAX_WORD_LEN, dictionary_nouns_lower);
-			}
-			fgets(current_word, MAX_WORD_LEN, dictionary_nouns_lower);
-
-			printf("%s\n", current_word);
-			case3_counter++;
+			read_word_dict(dictionary_nouns_lower, current_word, case3_counter);
 		}
 
 		// Case 4: Other dictionary words Lowercase - 8%
 		else if (percentage >= 55 && percentage < 59)
 		{
 			// We will go through the dictionary one by one
-			for (int a = 0; a < case4a_counter; a++)
-			{
-				// This for-loop reads and discards the words that as already been read
-				fgets(current_word, MAX_WORD_LEN, dictionary_verbs_lower);
-			}
-			fgets(current_word, MAX_WORD_LEN, dictionary_verbs_lower);
-
-			printf("%s\n", current_word);
-			case4a_counter++;
+			read_word_dict(dictionary_verbs_lower, current_word, case4a_counter);
 		}
 		else if (percentage >= 59 && percentage < 63)
 		{
 			// We will go through the dictionary one by one
-			for (int a = 0; a < case4b_counter; a++)
-			{
-				// This for-loop reads and discards the words that as already been read
-				fgets(current_word, MAX_WORD_LEN, dictionary_adjec_lower);
-			}
-			fgets(current_word, MAX_WORD_LEN, dictionary_adjec_lower);
-
-			printf("%s\n", current_word);
-			case4b_counter++;
+			read_word_dict(dictionary_adjec_lower, current_word, case4b_counter);
 		}
 
 		// Case 5: Names Uppercase - 8%
 		else if (percentage >= 63 && percentage < 67)
 		{
 			// We will go through the dictionary one by one
-			for (int a = 0; a < case5a_counter; a++)
-			{
-				// This for-loop reads and discards the words that as already been read
-				fgets(current_word, MAX_WORD_LEN, dictionary_name_male_upper);
-			}
-			fgets(current_word, MAX_WORD_LEN, dictionary_name_male_upper);
-
-			printf("%s\n", current_word);
-			case5a_counter++;
+			read_word_dict(dictionary_name_male_upper, current_word, case5a_counter);
 		}
+
 		else if (percentage >= 67 && percentage < 71)
 		{
 			// We will go through the dictionary one by one
-			for (int a = 0; a < case5b_counter; a++)
-			{
-				// This for-loop reads and discards the words that as already been read
-				fgets(current_word, MAX_WORD_LEN, dictionary_name_female_upper);
-			}
-			fgets(current_word, MAX_WORD_LEN, dictionary_name_female_upper);
-
-			printf("%s\n", current_word);
-			case5b_counter++;
+			read_word_dict(dictionary_name_female_upper, current_word, case5b_counter);
 		}
 
 		// Case 6: Nouns Uppercase - 7%
 		else if (percentage >= 71 && percentage < 78)
 		{
 			// We will go through the dictionary one by one
-			for (int a = 0; a < case6_counter; a++)
-			{
-				// This for-loop reads and discards the words that as already been read
-				fgets(current_word, MAX_WORD_LEN, dictionary_nouns_upper);
-			}
-			fgets(current_word, MAX_WORD_LEN, dictionary_nouns_upper);
-
-			printf("%s\n", current_word);
-			case6_counter++;
+			read_word_dict(dictionary_nouns_upper, current_word, case6_counter);
 		}
 
 		// Case 7: Other dictionary words Uppercase - 7%
 		else if (percentage >= 78 && percentage < 81)
 		{
 			// We will go through the dictionary one by one
-			for (int a = 0; a < case7a_counter; a++)
-			{
-				// This for-loop reads and discards the words that as already been read
-				fgets(current_word, MAX_WORD_LEN, dictionary_verbs_upper);
-			}
-			fgets(current_word, MAX_WORD_LEN, dictionary_verbs_upper);
-
-			printf("%s\n", current_word);
-			case7a_counter++;
+			read_word_dict(dictionary_verbs_upper, current_word, case7a_counter);
 		}
 		else if (percentage >= 81 && percentage < 85)
 		{
 			// We will go through the dictionary one by one
-			for (int a = 0; a < case7b_counter; a++)
-			{
-				// This for-loop reads and discards the words that as already been read
-				fgets(current_word, MAX_WORD_LEN, dictionary_adjec_upper);
-			}
-			fgets(current_word, MAX_WORD_LEN, dictionary_adjec_upper);
-
-			printf("%s\n", current_word);
-			case7b_counter++;
+			read_word_dict(dictionary_adjec_upper, current_word, case7b_counter);
 		}
 
 		/* Dictionary Attack finished, try brute force with randomised */
