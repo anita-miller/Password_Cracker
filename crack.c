@@ -60,7 +60,7 @@ void crack_noargument()
 	}
 
 	four_letter_pwd_creator(curr_guess, four_letter_hashed_passwords);
-	//six_letter_pwd_creator(curr_guess, six_letter_hashed_passwords);
+	six_letter_pwd_creator(curr_guess, six_letter_hashed_passwords);
 }
 
 
@@ -90,7 +90,7 @@ void crack_oneargument(int number_guesses)
 		{
 			// Because fgets also gets the newline character, so we search for length 7 and cut the final \n char.
 			curr_word[PASSWORD_LEN_SIX_LETTER] = '\0';
-			//printf("%s\n", curr_word);
+			printf("%s\n", curr_word);
 
 			// if reached the number specified then break;
 			number_guesses--;
@@ -98,14 +98,12 @@ void crack_oneargument(int number_guesses)
 			{
 				fclose(dictionary_common_passwords);
 				fclose(pwd6sha256);
-				return 0;
 			}
 		}
 	}
 	
 	//Dictionary Attack
 	FILE *files[10];
-	
 	files[0] = fopen(DB_NAMES_MALE_LOWER, "r");
 	files[1] = fopen(DB_NAMES_MALE_UPPER, "r");
 	files[2] = fopen(DB_NAMES_FEMALE_LOWER, "r");
@@ -128,7 +126,7 @@ void crack_oneargument(int number_guesses)
 		// craeting random value
 		int rateOfOccurance = rand() % 100;
 
-		if (rateOfOccurance < 85){
+		if (rateOfOccurance < 80){
 			dictionaryAttack(rateOfOccurance, files);
 		}
 		else{
@@ -156,7 +154,6 @@ void crack_twoargument(char *guesses_file, char *hashes_file)
 	if (!inputFile_hashes || !inputFile_guesses)
 	{
 		fprintf(stderr, "error: file open failed.\n");
-		return 1;
 	}
 
 	count_input_guesses = 0;

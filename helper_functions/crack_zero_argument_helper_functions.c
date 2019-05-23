@@ -88,11 +88,12 @@ void six_letter_pwd_creator(char *curr_guess, unsigned char six_letter_hashed_pa
 	int flag = 1;
 	int countPasswords = 0;
 	// 6-letters passwords: Brute Force
-	
+
+	//48-57 are number 0-9
+	//91-96 are [ / ] ^ _ '
 	for (int i = 48; i <= 122 && flag == 1; i++)
 	{
-		//48-57 are number 0-9
-		//91-96 are [ / ] ^ _ '
+		//skip the characters that are less common at passwords in order to make better guesses
 		if ((i >= 58 && i <= 64) || (i >= 91 && i <= 96) || (i >= 123 && i <= 126))
 		{
 			continue;
@@ -163,7 +164,6 @@ void six_letter_pwd_creator(char *curr_guess, unsigned char six_letter_hashed_pa
 							{
 								flag = 0;
 							}
-							//printf("%s\n", curr_guess);
 						}
 					}
 				}
