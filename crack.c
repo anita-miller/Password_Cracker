@@ -28,18 +28,17 @@
 #define COMMON_PASSWORDS "common_passwords.txt"
 #define NUM_4_LETTERS_PASSWORDS 10
 
-static const char *DB_COMMON_PASSWORDS = "6_letters/common_passwords.txt";
-static const char *DB_NAMES_MALE_LOWER = "6_letters/names_m_lower.txt";
-static const char *DB_NAMES_MALE_UPPER = "6_letters/names_m_lupper.txt";
-static const char *DB_NAMES_FEMALE_LOWER = "6_letters/names_f_lower.txt";
-static const char *DB_NAMES_FEMALE_UPPER = "6_letters/names_f_upper";
-static const char *DB_1000_NOUNS_LOWER = "6_letters/nouns_1000_lower.csv";
-static const char *DB_1000_NOUNS_UPPER = "6_letters/nouns_1000_upper.csv";
-static const char *DB_000_VERBS_LOWER = "6_letters/verbs_1000_lower.csv";
-static const char *DB_1000_VERBS_UPPER = "6_letters/verbs_1000_upper.csv";
-static const char *DB_1000_ADJEC_LOWER = "6_letters/adj_1000_lower.csv";
-static const char *DB_1000_ADJEC_UPPER = "6_letters/adj_1000_upper.csv";
-
+#define DB_COMMON_PASSWORDS "6_letters/common_passwords.txt"
+#define DB_NAMES_MALE_LOWER "6_letters/names_m_lower.txt"
+#define DB_NAMES_MALE_UPPER "6_letters/names_m_lupper.txt"
+#define DB_NAMES_FEMALE_LOWER "6_letters/names_f_lower.txt"
+#define DB_NAMES_FEMALE_UPPER "6_letters/names_f_upper"
+#define DB_1000_NOUNS_LOWER "6_letters/nouns_1000_lower.csv"
+#define DB_1000_NOUNS_UPPER "6_letters/nouns_1000_upper.csv"
+#define DB_1000_VERBS_LOWER "6_letters/verbs_1000_lower.csv"
+#define DB_1000_VERBS_UPPER "6_letters/verbs_1000_upper.csv"
+#define DB_1000_ADJEC_LOWER "6_letters/adj_1000_lower.csv"
+#define DB_1000_ADJEC_UPPER "6_letters/adj_1000_upper.csv"
 
 void crack_noargument()
 {
@@ -60,26 +59,29 @@ void crack_noargument()
 		fread(six_letter_hashed_passwords[i], sizeof(six_letter_hashed_passwords[i]), 1, pwd6sha256);
 	}
 
-	//four_letter_pwd_creator(curr_guess, four_letter_hashed_passwords);
-	six_letter_pwd_creator(curr_guess, six_letter_hashed_passwords);
+	four_letter_pwd_creator(curr_guess, four_letter_hashed_passwords);
+	//six_letter_pwd_creator(curr_guess, six_letter_hashed_passwords);
 }
 
 void crack_oneargument(int number_guesses)
 {
+	//int number_guesses = atoi(num_guesses);
 	char current_word[MAX_WORD_LEN];
 
 	// Store the binary file as an array of hex values (for 6-chars passwords)
 	unsigned char six_letter_hashed_passwords[NUM_SIX_LETTERS_PASSWORDS][SHA256_BLOCK_SIZE];
+	
 	FILE *pwd6sha256 = fopen(PASSWORD_FILE_SIXWORDS, "rb");
 	for (int i = 0; i < NUM_SIX_LETTERS_PASSWORDS; i++)
 	{
 		fread(six_letter_hashed_passwords[i], sizeof(six_letter_hashed_passwords[i]), 1, pwd6sha256);
 	}
 
+	char *fuck = "fucckkk";
 
 	/* Dictionary Attack Part */
 	// First thing first is a dictionary of common passwords
-	FILE *dictionary_common_passwords = fopen(DB_COMMON_PASSWORDS, "r");
+	/*FILE *dictionary_common_passwords = fopen(DB_COMMON_PASSWORDS, "r");
 	while (fgets(current_word, MAX_WORD_LEN, dictionary_common_passwords))
 	{
 		// Filter 6-letters passwords
@@ -87,17 +89,18 @@ void crack_oneargument(int number_guesses)
 		{
 			// Because fgets also gets the newline character, so we search for length 7 and cut the final \n char.
 			current_word[PASSWORD_LEN_SIX_LETTER] = '\0';
-			//printf("%s\n", current_word);
+			printf("%s\n", current_word);
 			// if reached the number specified then break;
 			number_guesses--;
 			if (number_guesses == 0)
 			{
 				fclose(dictionary_common_passwords);
 				fclose(pwd6sha256);
+				printf("%s\n", fuck);
 				return 0;
 			}
 		}
-	}
+	}*/
 	// Then it's the Weighted Dictionary Attack
 	FILE *dictionary_name_male_lower = fopen(DB_NAMES_MALE_LOWER, "r");
 	FILE *dictionary_name_male_upper = fopen(DB_NAMES_MALE_UPPER, "r");
@@ -105,7 +108,7 @@ void crack_oneargument(int number_guesses)
 	FILE *dictionary_name_female_upper = fopen(DB_NAMES_FEMALE_UPPER, "r");
 	FILE *dictionary_nouns_lower = fopen(DB_1000_NOUNS_LOWER, "r");
 	FILE *dictionary_nouns_upper = fopen(DB_1000_NOUNS_UPPER, "r");
-	FILE *dictionary_verbs_lower = fopen(DB_000_VERBS_LOWER, "r");
+	FILE *dictionary_verbs_lower = fopen(DB_1000_VERBS_LOWER, "r");
 	FILE *dictionary_verbs_upper = fopen(DB_1000_VERBS_UPPER, "r");
 	FILE *dictionary_adj_lower = fopen(DB_1000_ADJEC_LOWER, "r");
 	FILE *dictionary_adj_upper = fopen(DB_1000_ADJEC_UPPER, "r");
@@ -138,73 +141,87 @@ void crack_oneargument(int number_guesses)
 		if (percentage >= 0 && percentage < 25)
 		{
 			// We will generate a random 6 digit number
-			current_word = create_rand_num();
-				
+			for (int letter_count = 0; letter_count < PASSWORD_LEN_SIX_LETTER; letter_count++)
+			{
+				current_word[letter_count] = 48 + rand() % 10;
+			}
+			current_word[PASSWORD_LEN_SIX_LETTER] = '\0';
 			printf("%s\n", current_word);
+
 		}
 
 		// Case 2: Names Lowercase - 15%
 		else if (percentage >= 25 && percentage < 32)
 		{
 			// We will go through the dictionary one by one
-			name_male_lower_counter = read_word_dict(dictionary_name_male_lower, current_word, name_male_lower_counter);
+			read_word_dict(dictionary_name_male_lower, current_word, name_male_lower_counter);
+			name_male_lower_counter++;
 		}
 
 		else if (percentage >= 32 && percentage < 40)
 		{	
 			// We will go through the dictionary one by one
-			name_female_lower_counter = read_word_dict(dictionary_name_female_lower, current_word, name_female_lower_counter);
+			 read_word_dict(dictionary_name_female_lower, current_word, name_female_lower_counter);
+			 name_female_lower_counter++;
 		}
 
 		// Case 3: Nouns Lowercase - 15%
 		else if (percentage >= 40 && percentage < 55)
 		{
 			// We will go through the dictionary one by one
-			nouns_lower_counter = read_word_dict(dictionary_nouns_lower, current_word, nouns_lower_counter);
+			read_word_dict(dictionary_nouns_lower, current_word, nouns_lower_counter);
+			nouns_lower_counter++;
 		}
 
 		// Case 4: Other dictionary words Lowercase - 8%
 		else if (percentage >= 55 && percentage < 59)
 		{
 			// We will go through the dictionary one by one
-			verbs_lower_counter = read_word_dict(dictionary_verbs_lower, current_word, verbs_lower_counter);
+			read_word_dict(dictionary_verbs_lower, current_word, verbs_lower_counter);
+			verbs_lower_counter++;
 		}
 		else if (percentage >= 59 && percentage < 63)
 		{
 			// We will go through the dictionary one by one
-			adj_lower_counter = read_word_dict(dictionary_adj_lower, current_word, adj_lower_counter);
+			read_word_dict(dictionary_adj_lower, current_word, adj_lower_counter);
+			adj_lower_counter++;
 		}
 
 		// Case 5: Names Uppercase - 8%
 		else if (percentage >= 63 && percentage < 67)
 		{
 			// We will go through the dictionary one by one
-			name_male_upper_counter = read_word_dict(dictionary_name_male_upper, current_word, name_male_upper_counter);
+			read_word_dict(dictionary_name_male_upper, current_word, name_male_upper_counter);
+			name_male_upper_counter++;
 		}
 
 		else if (percentage >= 67 && percentage < 71)
 		{
 			// We will go through the dictionary one by one
-			name_female_upper_counter = read_word_dict(dictionary_name_female_upper, current_word, name_female_upper_counter);
+			read_word_dict(dictionary_name_female_upper, current_word, name_female_upper_counter);
+			name_female_upper_counter++;
 		}
 
 		// Case 6: Nouns Uppercase - 7%
 		else if (percentage >= 71 && percentage < 78)
 		{
 			// We will go through the dictionary one by one
-			nouns_upper_counter = read_word_dict(dictionary_nouns_upper, current_word, nouns_upper_counter);
+			read_word_dict(dictionary_nouns_upper, current_word, nouns_upper_counter);
+			nouns_upper_counter++;
 		}
 
 		// Case 7: Other dictionary words Uppercase - 7%
 		else if (percentage >= 78 && percentage < 81)
 		{
 			// We will go through the dictionary one by one
-			verbs_upper_counter = read_word_dict(dictionary_verbs_upper, current_word, verbs_upper_counter);
+			read_word_dict(dictionary_verbs_upper, current_word, verbs_upper_counter);
+			verbs_upper_counter++;
 		}
 		else if (percentage >= 81 && percentage < 85)
 		{
 			// We will go through the dictionary one by one
-			adj_upper_counter = read_word_dict(dictionary_adj_upper, current_word, adj_upper_counter);
+			read_word_dict(dictionary_adj_upper, current_word, adj_upper_counter);
+			adj_upper_counter++;
 		}
 
 		/* Dictionary Attack finished, try brute force with randomised */

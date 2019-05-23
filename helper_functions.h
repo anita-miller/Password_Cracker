@@ -18,7 +18,7 @@ void four_letter_pwd_creator(char *curr_guess, unsigned char four_letter_hashed_
 
 void six_letter_pwd_creator(char *curr_guess, unsigned char six_letter_hashed_passwords[NUM_SIX_LETTERS_PASSWORDS][SHA256_BLOCK_SIZE]);
 
-int read_word_dict(FILE *db, char *word, int count);
+void read_word_dict(FILE *db, char *word, int count);
 
 char *create_rand_num();
 

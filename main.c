@@ -8,6 +8,7 @@
 #include <string.h>
 #include <memory.h>
 #include <stddef.h>
+
 #include "sha256.h"
 
 #include "crack.h"
@@ -24,7 +25,8 @@ int main(int argc, char **argv)
 	// Part 2: one argument to crack.exe
 	else if (argc == 2)
 	{
-		crack_oneargument(argv[1]);
+		char * input = argv[1];
+		crack_oneargument(atoi(input));
 	}
 
 	// Part 3: three arguments to crack.exe	
