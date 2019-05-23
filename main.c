@@ -9,10 +9,9 @@
 #include <memory.h>
 #include <stddef.h>
 
-#include "sha256.h"
-
 #include "crack.h"
-#include "helper_functions.h"
+#include "helper_functions/crack_zero_argument_helper_functions.h"
+#include "helper_functions/crack_one_argument_helper_functions.h"
 
 int main(int argc, char **argv)
 {

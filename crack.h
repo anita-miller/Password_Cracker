@@ -1,6 +1,5 @@
 #ifndef CRACK_H_
 #define CRACK_H_
-#include "helper_functions.h"
 
 void crack_noargument();
 

@@ -13,8 +13,8 @@
 #include <stddef.h>
 
 #include "crack.h"
-#include "sha256.h"
-#include "helper_functions.h"
+#include "helper_functions/crack_zero_argument_helper_functions.h"
+#include "helper_functions/crack_one_argument_helper_functions.h"
 
 #define SHA256_BLOCK_SIZE 32
 #define MAX_WORD_LEN 10000
@@ -25,7 +25,7 @@
 
 #define PASSWORD_FILE_FOURWORDS "pwd4sha256"
 #define PASSWORD_FILE_SIXWORDS "pwd6sha256"
-#define COMMON_PASSWORDS "common_passwords.txt"
+#define COMMON_PASSWORDS "6_letters/common_passwords.txt"
 #define NUM_4_LETTERS_PASSWORDS 10
 
 #define DB_COMMON_PASSWORDS "6_letters/common_passwords.txt"
@@ -63,10 +63,12 @@ void crack_noargument()
 	//six_letter_pwd_creator(curr_guess, six_letter_hashed_passwords);
 }
 
+
+
 void crack_oneargument(int number_guesses)
 {
 	//int number_guesses = atoi(num_guesses);
-	char current_word[MAX_WORD_LEN];
+	char curr_word[MAX_WORD_LEN];
 
 	// Store the binary file as an array of hex values (for 6-chars passwords)
 	unsigned char six_letter_hashed_passwords[NUM_SIX_LETTERS_PASSWORDS][SHA256_BLOCK_SIZE];
@@ -77,255 +79,61 @@ void crack_oneargument(int number_guesses)
 		fread(six_letter_hashed_passwords[i], sizeof(six_letter_hashed_passwords[i]), 1, pwd6sha256);
 	}
 
-	char *fuck = "fucckkk";
 
-	/* Dictionary Attack Part */
+	// Dictionary Attack 
 	// First thing first is a dictionary of common passwords
-	/*FILE *dictionary_common_passwords = fopen(DB_COMMON_PASSWORDS, "r");
-	while (fgets(current_word, MAX_WORD_LEN, dictionary_common_passwords))
+	FILE *dictionary_common_passwords = fopen(DB_COMMON_PASSWORDS, "r");
+	while (fgets(curr_word, MAX_WORD_LEN, dictionary_common_passwords))
 	{
 		// Filter 6-letters passwords
-		if (strlen(current_word) == PASSWORD_LEN_SIX_LETTER + 1)
+		if (strlen(curr_word) == PASSWORD_LEN_SIX_LETTER + 1)
 		{
 			// Because fgets also gets the newline character, so we search for length 7 and cut the final \n char.
-			current_word[PASSWORD_LEN_SIX_LETTER] = '\0';
-			printf("%s\n", current_word);
+			curr_word[PASSWORD_LEN_SIX_LETTER] = '\0';
+			//printf("%s\n", curr_word);
+
 			// if reached the number specified then break;
 			number_guesses--;
 			if (number_guesses == 0)
 			{
 				fclose(dictionary_common_passwords);
 				fclose(pwd6sha256);
-				printf("%s\n", fuck);
 				return 0;
 			}
 		}
-	}*/
-	// Then it's the Weighted Dictionary Attack
-	FILE *dictionary_name_male_lower = fopen(DB_NAMES_MALE_LOWER, "r");
-	FILE *dictionary_name_male_upper = fopen(DB_NAMES_MALE_UPPER, "r");
-	FILE *dictionary_name_female_lower = fopen(DB_NAMES_FEMALE_LOWER, "r");
-	FILE *dictionary_name_female_upper = fopen(DB_NAMES_FEMALE_UPPER, "r");
-	FILE *dictionary_nouns_lower = fopen(DB_1000_NOUNS_LOWER, "r");
-	FILE *dictionary_nouns_upper = fopen(DB_1000_NOUNS_UPPER, "r");
-	FILE *dictionary_verbs_lower = fopen(DB_1000_VERBS_LOWER, "r");
-	FILE *dictionary_verbs_upper = fopen(DB_1000_VERBS_UPPER, "r");
-	FILE *dictionary_adj_lower = fopen(DB_1000_ADJEC_LOWER, "r");
-	FILE *dictionary_adj_upper = fopen(DB_1000_ADJEC_UPPER, "r");
-	// Constants
+	}
+	
+	//Dictionary Attack
+	FILE *files[10];
+	
+	files[0] = fopen(DB_NAMES_MALE_LOWER, "r");
+	files[1] = fopen(DB_NAMES_MALE_UPPER, "r");
+	files[2] = fopen(DB_NAMES_FEMALE_LOWER, "r");
+	files[3] = fopen(DB_NAMES_FEMALE_UPPER, "r");
+	files[4] = fopen(DB_1000_NOUNS_LOWER, "r");
+	files[5] = fopen(DB_1000_NOUNS_UPPER, "r");
+	files[6] = fopen(DB_1000_VERBS_LOWER, "r");
+	files[7] = fopen(DB_1000_VERBS_UPPER, "r");
+	files[8] = fopen(DB_1000_ADJEC_LOWER, "r");
+	files[9] = fopen(DB_1000_ADJEC_UPPER, "r");
+
 	time_t seed_of_seed;
 	srand((unsigned)time(&seed_of_seed));
 	int seed = rand();
 	srand((unsigned)seed);
 
-	/*
-	int name_male_lower_counter = 0;
-	int name_female_lower_counter = 0;
-	int nouns_lower_counter = 0;
-	int verbs_lower_counter = 0;
-	int adj_lower_counter = 0;
-	int name_male_upper_counter = 0;
-	int name_female_upper_counter = 0;
-	int nouns_upper_counter = 0;
-	int verbs_upper_counter = 0;
-	int adj_upper_counter = 0;*/
-
-	// To randomise the order of guesses, we have 12 cases and each case is
-	// weighted differently (see Algorithm_plan.txt for detail). Based on passwords in pwd4sha256,
-	// combination of lower case nouns are very popular, therefore has a higher weight.
+	// giving each type of password explained in README a weight based on how popular they are
 	for (int i = 0; i < number_guesses; i++)
 	{
-		// This randomisation is achieved by a random number ranging 0-99 (used as percentage)
-		int percentage = rand() % 100;
+		// craeting random value
+		int rateOfOccurance = rand() % 100;
 
-		// Case 1: Number combination - 25%
-		if (percentage >= 0 && percentage < 25)
-		{
-			// We will generate a random 6 digit number
-			for (int letter_count = 0; letter_count < PASSWORD_LEN_SIX_LETTER; letter_count++)
-			{
-				current_word[letter_count] = 48 + rand() % 10;
-			}
-			current_word[PASSWORD_LEN_SIX_LETTER] = '\0';
-			printf("%s\n", current_word);
-
+		if (rateOfOccurance < 85){
+			dictionaryAttack(rateOfOccurance, files);
 		}
-
-		// Case 2: Names Lowercase - 15%
-		else if (percentage >= 25 && percentage < 32)
-		{
-			// We will go through the dictionary one by one
-			fgets(current_word, MAX_WORD_LEN, dictionary_name_male_lower);
-		}
-
-		else if (percentage >= 32 && percentage < 40)
-		{	
-			// We will go through the dictionary one by one
-			fgets(current_word, MAX_WORD_LEN, dictionary_name_female_lower);
-		}
-
-		// Case 3: Nouns Lowercase - 15%
-		else if (percentage >= 40 && percentage < 55)
-		{
-			// We will go through the dictionary one by one
-			fgets(current_word, MAX_WORD_LEN, dictionary_nouns_lower);
-		}
-
-		// Case 4: Other dictionary words Lowercase - 8%
-		else if (percentage >= 55 && percentage < 59)
-		{
-			// We will go through the dictionary one by one
-			fgets(current_word, MAX_WORD_LEN, dictionary_verbs_lower);
-		}
-		else if (percentage >= 59 && percentage < 63)
-		{
-			// We will go through the dictionary one by one
-			fgets(current_word, MAX_WORD_LEN, dictionary_adj_lower);
-		}
-
-		// Case 5: Names Uppercase - 8%
-		else if (percentage >= 63 && percentage < 67)
-		{
-			// We will go through the dictionary one by one
-			fgets(current_word, MAX_WORD_LEN, dictionary_name_male_upper);
-		}
-
-		else if (percentage >= 67 && percentage < 71)
-		{
-			// We will go through the dictionary one by one
-			fgets(current_word, MAX_WORD_LEN, dictionary_name_female_upper);
-		}
-
-		// Case 6: Nouns Uppercase - 7%
-		else if (percentage >= 71 && percentage < 78)
-		{
-			// We will go through the dictionary one by one
-			fgets(current_word, MAX_WORD_LEN, dictionary_nouns_upper);
-		}
-
-		// Case 7: Other dictionary words Uppercase - 7%
-		else if (percentage >= 78 && percentage < 81)
-		{
-			// We will go through the dictionary one by one
-			fgets(current_word, MAX_WORD_LEN, dictionary_verbs_upper);
-		}
-		else if (percentage >= 81 && percentage < 85)
-		{
-			// We will go through the dictionary one by one
-			fgets(current_word, MAX_WORD_LEN, dictionary_adj_upper);
-		}
-
-		/* Dictionary Attack finished, try brute force with randomised */
-		// Case 8: Mix of lowercase letters and numbers - 5%
-		else if (percentage >= 85 && percentage < 90)
-		{
-			// generate each digit
-			for (int letter_count = 0; letter_count < PASSWORD_LEN_SIX_LETTER; letter_count++)
-			{
-				// toss a coin to decide this digit is number or letter
-				int coin = rand() % 2;
-				if (coin == 0)
-				{
-					// numebers
-					current_word[letter_count] = 48 + rand() % 10;
-				}
-				else if (coin == 1)
-				{
-					// lowercase letters
-					current_word[letter_count] = 97 + rand() % 26;
-				}
-			}
-			current_word[PASSWORD_LEN_SIX_LETTER] = '\0';
-			printf("%s\n", current_word);
-		}
-
-		// Case 9: Mix of Uppercase letters and numbers - 5%
-		else if (percentage >= 90 && percentage < 95)
-		{
-			// generate each digit
-			for (int letter_count = 0; letter_count < PASSWORD_LEN_SIX_LETTER; letter_count++)
-			{
-				// toss a coin to decide this digit is number or letter
-				int coin = rand() % 2;
-				if (coin == 0)
-				{
-					// numbers
-					current_word[letter_count] = 48 + rand() % 10;
-				}
-				else if (coin == 1)
-				{
-					// uppercase letters
-					current_word[letter_count] = 65 + rand() % 26;
-				}
-			}
-			current_word[PASSWORD_LEN_SIX_LETTER] = '\0';
-			printf("%s\n", current_word);
-		}
-
-		// Case 10: Mix of lowercase letters and Uppercase letters【3%】
-		else if (percentage >= 95 && percentage < 98)
-		{
-			// generate each character
-			for (int letter_count = 0; letter_count < PASSWORD_LEN_SIX_LETTER; letter_count++)
-			{
-				// toss a coin to decide this digit is number or letter
-				int coin = rand() % 2;
-				if (coin == 0)
-				{
-					// uppercase letter
-					current_word[letter_count] = 65 + rand() % 26;
-				}
-				else if (coin == 1)
-				{
-					// lowercase letters
-					current_word[letter_count] = 97 + rand() % 26;
-				}
-			}
-			current_word[PASSWORD_LEN_SIX_LETTER] = '\0';
-			printf("%s\n", current_word);
-		}
-
-		// Case 11: All Symbols【1%】
-		else if (percentage == 98)
-		{
-			// generate each character
-			for (int letter_count = 0; letter_count < PASSWORD_LEN_SIX_LETTER; letter_count++)
-			{
-				// In ASCII table the symbols are not all next to each other, they have four groups and 33 symbols in total
-				int pick_symbol_group = rand() % 33;
-				int symbol;
-				if (pick_symbol_group >= 0 && pick_symbol_group < 16)
-				{
-					symbol = 32 + rand() % 16;
-				}
-				else if (pick_symbol_group >= 16 && pick_symbol_group < 23)
-				{
-					symbol = 58 + rand() % 7;
-				}
-				else if (pick_symbol_group >= 23 && pick_symbol_group < 29)
-				{
-					symbol = 91 + rand() % 6;
-				}
-				else
-				{
-					symbol = 123 + rand() % 4;
-				}
-				current_word[letter_count] = symbol;
-			}
-			current_word[PASSWORD_LEN_SIX_LETTER] = '\0';
-			printf("%s\n", current_word);
-		}
-
-		// Case 12: Mixture of symbols, numbers and letters [1%]
-		else
-		{
-			// generate each digit
-			for (int letter_count = 0; letter_count < PASSWORD_LEN_SIX_LETTER; letter_count++)
-			{
-				current_word[letter_count] = 32 + rand() % 95;
-			}
-			current_word[PASSWORD_LEN_SIX_LETTER] = '\0';
-			printf("%s\n", current_word);
+		else{
+			//after dicionary attack we try mix of letteres and num using brute force
+			mixOfNumLettersBruteForce(rateOfOccurance);
 		}
 	}
 }
