@@ -32,7 +32,7 @@
 #define DB_NAMES_MALE_LOWER "6_letters/names_m_lower.txt"
 #define DB_NAMES_MALE_UPPER "6_letters/names_m_lupper.txt"
 #define DB_NAMES_FEMALE_LOWER "6_letters/names_f_lower.txt"
-#define DB_NAMES_FEMALE_UPPER "6_letters/names_f_upper"
+#define DB_NAMES_FEMALE_UPPER "6_letters/names_f_upper.txt"
 #define DB_1000_NOUNS_LOWER "6_letters/nouns_1000_lower.csv"
 #define DB_1000_NOUNS_UPPER "6_letters/nouns_1000_upper.csv"
 #define DB_1000_VERBS_LOWER "6_letters/verbs_1000_lower.csv"
@@ -118,6 +118,7 @@ void crack_oneargument(int number_guesses)
 	int seed = rand();
 	srand((unsigned)seed);
 
+	/*
 	int name_male_lower_counter = 0;
 	int name_female_lower_counter = 0;
 	int nouns_lower_counter = 0;
@@ -127,7 +128,7 @@ void crack_oneargument(int number_guesses)
 	int name_female_upper_counter = 0;
 	int nouns_upper_counter = 0;
 	int verbs_upper_counter = 0;
-	int adj_upper_counter = 0;
+	int adj_upper_counter = 0;*/
 
 	// To randomise the order of guesses, we have 12 cases and each case is
 	// weighted differently (see Algorithm_plan.txt for detail). Based on passwords in pwd4sha256,
@@ -154,74 +155,64 @@ void crack_oneargument(int number_guesses)
 		else if (percentage >= 25 && percentage < 32)
 		{
 			// We will go through the dictionary one by one
-			read_word_dict(dictionary_name_male_lower, current_word, name_male_lower_counter);
-			name_male_lower_counter++;
+			fgets(current_word, MAX_WORD_LEN, dictionary_name_male_lower);
 		}
 
 		else if (percentage >= 32 && percentage < 40)
 		{	
 			// We will go through the dictionary one by one
-			 read_word_dict(dictionary_name_female_lower, current_word, name_female_lower_counter);
-			 name_female_lower_counter++;
+			fgets(current_word, MAX_WORD_LEN, dictionary_name_female_lower);
 		}
 
 		// Case 3: Nouns Lowercase - 15%
 		else if (percentage >= 40 && percentage < 55)
 		{
 			// We will go through the dictionary one by one
-			read_word_dict(dictionary_nouns_lower, current_word, nouns_lower_counter);
-			nouns_lower_counter++;
+			fgets(current_word, MAX_WORD_LEN, dictionary_nouns_lower);
 		}
 
 		// Case 4: Other dictionary words Lowercase - 8%
 		else if (percentage >= 55 && percentage < 59)
 		{
 			// We will go through the dictionary one by one
-			read_word_dict(dictionary_verbs_lower, current_word, verbs_lower_counter);
-			verbs_lower_counter++;
+			fgets(current_word, MAX_WORD_LEN, dictionary_verbs_lower);
 		}
 		else if (percentage >= 59 && percentage < 63)
 		{
 			// We will go through the dictionary one by one
-			read_word_dict(dictionary_adj_lower, current_word, adj_lower_counter);
-			adj_lower_counter++;
+			fgets(current_word, MAX_WORD_LEN, dictionary_adj_lower);
 		}
 
 		// Case 5: Names Uppercase - 8%
 		else if (percentage >= 63 && percentage < 67)
 		{
 			// We will go through the dictionary one by one
-			read_word_dict(dictionary_name_male_upper, current_word, name_male_upper_counter);
-			name_male_upper_counter++;
+			fgets(current_word, MAX_WORD_LEN, dictionary_name_male_upper);
 		}
 
 		else if (percentage >= 67 && percentage < 71)
 		{
 			// We will go through the dictionary one by one
-			read_word_dict(dictionary_name_female_upper, current_word, name_female_upper_counter);
-			name_female_upper_counter++;
+			fgets(current_word, MAX_WORD_LEN, dictionary_name_female_upper);
 		}
 
 		// Case 6: Nouns Uppercase - 7%
 		else if (percentage >= 71 && percentage < 78)
 		{
 			// We will go through the dictionary one by one
-			read_word_dict(dictionary_nouns_upper, current_word, nouns_upper_counter);
-			nouns_upper_counter++;
+			fgets(current_word, MAX_WORD_LEN, dictionary_nouns_upper);
 		}
 
 		// Case 7: Other dictionary words Uppercase - 7%
 		else if (percentage >= 78 && percentage < 81)
 		{
 			// We will go through the dictionary one by one
-			read_word_dict(dictionary_verbs_upper, current_word, verbs_upper_counter);
-			verbs_upper_counter++;
+			fgets(current_word, MAX_WORD_LEN, dictionary_verbs_upper);
 		}
 		else if (percentage >= 81 && percentage < 85)
 		{
 			// We will go through the dictionary one by one
-			read_word_dict(dictionary_adj_upper, current_word, adj_upper_counter);
-			adj_upper_counter++;
+			fgets(current_word, MAX_WORD_LEN, dictionary_adj_upper);
 		}
 
 		/* Dictionary Attack finished, try brute force with randomised */

@@ -187,12 +187,6 @@ char *create_rand_num()
 
 void read_word_dict(FILE *db, char *word, int count)
 {
-	// We will go through the dictionary one by one
-	for (int a = 0; a < count; a++)
-	{
-		// This for-loop reads and discards the words that has already been read
-		fgets(word, MAX_WORD_LEN, db);
-	}
 	fgets(word, MAX_WORD_LEN, db);
 
 	printf("%s\n", word);
