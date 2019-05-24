@@ -78,37 +78,23 @@ void crack_oneargument(int number_guesses)
 	//int number_guesses = atoi(num_guesses);
 	char curr_word[MAX_WORD_LEN];
 	int flag = 1;
-	// Store the binary file as an array of hex values (for 6-chars passwords)
-	unsigned char six_letter_hashed_passwords[NUM_SIX_LETTERS_PASSWORDS][SHA256_BLOCK_SIZE];
 	
-	FILE *pwd6sha256 = fopen(PASSWORD_FILE_SIXWORDS, "rb");
-	for (int i = 0; i < NUM_SIX_LETTERS_PASSWORDS; i++)
-	{
-		fread(six_letter_hashed_passwords[i], sizeof(six_letter_hashed_passwords[i]), 1, pwd6sha256);
-	}
-
-
 	// Dictionary Attack 
 	// First thing first is a dictionary of common passwords
 	FILE *dictionary_common_passwords = fopen(DB_COMMON_PASSWORDS, "r");
 	while (fgets(curr_word, MAX_WORD_LEN, dictionary_common_passwords))
 	{
-		// Filter 6-letters passwords
-		if (strlen(curr_word) == PASSWORD_LEN_SIX_LETTER + 1)
-		{
-			// Because fgets also gets the newline character, so we search for length 7 and cut the final \n char.
-			curr_word[PASSWORD_LEN_SIX_LETTER] = '\0';
-			printf("%s\n", curr_word);
+		// Because fgets also gets the newline character, so we search for length 7 and cut the final \n char.
+		curr_word[PASSWORD_LEN_SIX_LETTER] = '\0';
+		printf("%s\n", curr_word);
 
-			// if reached the number specified then break;
-			number_guesses--;
-			if (number_guesses == 0)
-			{
-				//if all the guesses are found set flag as 0
-				flag = 0;
-				fclose(dictionary_common_passwords);
-				fclose(pwd6sha256);
-			}
+		// if reached the number specified then break;
+		number_guesses--;
+		if (number_guesses == 0)
+		{
+			//if all the guesses are found set flag as 0
+			flag = 0;
+			fclose(dictionary_common_passwords);
 		}
 	}
 	
@@ -142,13 +128,16 @@ void crack_oneargument(int number_guesses)
 			if (rateOfOccurance < 80)
 			{
 				dictionaryAttack(rateOfOccurance, files);
+				
 			}
 			else
 			{
 				//after dicionary attack we try mix of letteres and num using brute force
 				mixOfNumLettersBruteForce(rateOfOccurance);
+				
 			}
 		}
+		printf("%d\n", number_guesses);
 	}
 	
 }
