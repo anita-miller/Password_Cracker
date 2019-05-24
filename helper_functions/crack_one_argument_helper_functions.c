@@ -33,7 +33,8 @@ void dictionaryAttack(int rateOfOccurance, FILE **files)
 	{
 		// We will go through the dictionary one by one
 		fgets(curr_word, MAX_WORD_LEN, files[4]);
-		printf("%s\n", curr_word);
+		printf("%s", curr_word);
+		memset(&curr_word[0], 0, sizeof(curr_word));
 	}
 
 	// Case 2: Number combination - %15
@@ -46,21 +47,24 @@ void dictionaryAttack(int rateOfOccurance, FILE **files)
 		}
 		curr_word[PASSWORD_LEN_SIX_LETTER] = '\0';
 		printf("%s\n", curr_word);
+		memset(&curr_word[0], 0, sizeof(curr_word));
 	}
 
 	// Case 3: Names Lowercase - 15%
-	else if (rateOfOccurance >= 40 && rateOfOccurance < 58)
+	else if (rateOfOccurance >= 40 && rateOfOccurance < 48)
 	{
 		// We will go through the dictionary one by one
 		fgets(curr_word, MAX_WORD_LEN, files[0]);
-		printf("%s\n", curr_word);
+		printf("%s", curr_word);
+		memset(&curr_word[0], 0, sizeof(curr_word));
 	}
 
 	else if (rateOfOccurance >= 48 && rateOfOccurance < 55)
 	{
 		// We will go through the dictionary one by one
 		fgets(curr_word, MAX_WORD_LEN, files[2]);
-		printf("%s\n", curr_word);
+		printf("%s", curr_word);
+		memset(&curr_word[0], 0, sizeof(curr_word));
 	}
 
 	// Case 4: Other dictionary words Lowercase - 10%
@@ -68,13 +72,15 @@ void dictionaryAttack(int rateOfOccurance, FILE **files)
 	{
 		// We will go through the dictionary one by one
 		fgets(curr_word, MAX_WORD_LEN, files[6]);
-		printf("%s\n", curr_word);
+		printf("%s", curr_word);
+		memset(&curr_word[0], 0, sizeof(curr_word));
 	}
 	else if (rateOfOccurance >= 60 && rateOfOccurance < 65)
 	{
 		// We will go through the dictionary one by one
 		fgets(curr_word, MAX_WORD_LEN, files[8]);
-		printf("%s\n", curr_word);
+		printf("%s", curr_word);
+		memset(&curr_word[0], 0, sizeof(curr_word));
 	}
 
 	// Case 5: Names Uppercase - 5%
@@ -82,14 +88,16 @@ void dictionaryAttack(int rateOfOccurance, FILE **files)
 	{
 		// We will go through the dictionary one by one
 		fgets(curr_word, MAX_WORD_LEN, files[1]);
-		printf("%s\n", curr_word);
+		printf("%s", curr_word);
+		memset(&curr_word[0], 0, sizeof(curr_word));
 	}
 
 	else if (rateOfOccurance >= 68 && rateOfOccurance < 70)
 	{
 		// We will go through the dictionary one by one
 		fgets(curr_word, MAX_WORD_LEN, files[3]);
-		printf("%s\n", curr_word);
+		printf("%s", curr_word);
+		memset(&curr_word[0], 0, sizeof(curr_word));
 	}
 
 	// Case 6: Nouns Uppercase - 5%
@@ -97,7 +105,8 @@ void dictionaryAttack(int rateOfOccurance, FILE **files)
 	{
 		// We will go through the dictionary one by one
 		fgets(curr_word, MAX_WORD_LEN, files[5]);
-		printf("%s\n", curr_word);
+		printf("%s", curr_word);
+		memset(&curr_word[0], 0, sizeof(curr_word));
 	}
 
 	// Case 7: Other dictionary words Uppercase - 5%
@@ -105,23 +114,24 @@ void dictionaryAttack(int rateOfOccurance, FILE **files)
 	{
 		// We will go through the dictionary one by one
 		fgets(curr_word, MAX_WORD_LEN, files[7]);
-		printf("%s\n", curr_word);
+		printf("%s", curr_word);
+		memset(&curr_word[0], 0, sizeof(curr_word));
 	}
 	else if (rateOfOccurance >= 78 && rateOfOccurance < 80)
 	{
 		// We will go through the dictionary one by one
 		fgets(curr_word, MAX_WORD_LEN, files[9]);
-		printf("%s\n", curr_word);
+		printf("%s", curr_word);
+		memset(&curr_word[0], 0, sizeof(curr_word));
 	}
 }
-
-
 
 void mixOfNumLettersBruteForce(int rateOfOccurance)
 {
 	char curr_word[MAX_WORD_LEN];
 	// toss a randomiser to decide this digit is number or letter
 	int randomiser = rand() % 2;
+
 	if (rateOfOccurance >= 80 && rateOfOccurance < 90)
 	{
 		// generating digits
@@ -140,6 +150,7 @@ void mixOfNumLettersBruteForce(int rateOfOccurance)
 		}
 		curr_word[PASSWORD_LEN_SIX_LETTER] = '\0';
 		printf("%s\n", curr_word);
+		memset(&curr_word[0], 0, sizeof(curr_word));
 	}
 
 	// Case 9: Mix of Uppercase letters and numbers - 5%
@@ -148,17 +159,20 @@ void mixOfNumLettersBruteForce(int rateOfOccurance)
 		// generating digits
 		for (int position = 0; position < PASSWORD_LEN_SIX_LETTER; position++)
 		{
-			if (randomiser == 0){
+			if (randomiser == 0)
+			{
 				// numbers
 				curr_word[position] = START_POS_NUMBERS + rand() % 10;
 			}
-			else if (randomiser == 1){
+			else if (randomiser == 1)
+			{
 				// uppercase letters
 				curr_word[position] = START_POS_UPPERCASE + rand() % 26;
 			}
 		}
 		curr_word[PASSWORD_LEN_SIX_LETTER] = '\0';
 		printf("%s\n", curr_word);
+		memset(&curr_word[0], 0, sizeof(curr_word));
 	}
 
 	// Mix of lowercase letters and Uppercase letters【3%】
@@ -167,17 +181,20 @@ void mixOfNumLettersBruteForce(int rateOfOccurance)
 		// generating characters
 		for (int position = 0; position < PASSWORD_LEN_SIX_LETTER; position++)
 		{
-			if (randomiser == 0){
+			if (randomiser == 0)
+			{
 				// uppercase letter
 				curr_word[position] = START_POS_UPPERCASE + rand() % 26;
 			}
-			else if (randomiser == 1){
+			else if (randomiser == 1)
+			{
 				// lowercase letters
 				curr_word[position] = START_POS_LOWERRCASE + rand() % 26;
 			}
 		}
 		curr_word[PASSWORD_LEN_SIX_LETTER] = '\0';
 		printf("%s\n", curr_word);
+		memset(&curr_word[0], 0, sizeof(curr_word));
 	}
 
 	// all possible symbols【1%】
@@ -191,19 +208,23 @@ void mixOfNumLettersBruteForce(int rateOfOccurance)
 
 			int group_of_symbol = rand() % 33;
 			int symbol;
-			if (group_of_symbol >= 0 && group_of_symbol < 16){
+			if (group_of_symbol >= 0 && group_of_symbol < 16)
+			{
 				symbol = START_FIRST_GROUP_SYMBOLS + rand() % 16;
 			}
 
-			else if (group_of_symbol >= 16 && group_of_symbol < 23){
+			else if (group_of_symbol >= 16 && group_of_symbol < 23)
+			{
 				symbol = START_SECOND_GROUP_SYMBOLS + rand() % 7;
 			}
 
-			else if (group_of_symbol >= 23 && group_of_symbol < 29){
+			else if (group_of_symbol >= 23 && group_of_symbol < 29)
+			{
 				symbol = START_THIRD_GROUP_SYMBOLS + rand() % 6;
 			}
 
-			else{
+			else
+			{
 				symbol = START_FOURTH_GROUP_SYMBOLS + rand() % 4;
 			}
 
@@ -211,6 +232,7 @@ void mixOfNumLettersBruteForce(int rateOfOccurance)
 		}
 		curr_word[PASSWORD_LEN_SIX_LETTER] = '\0';
 		printf("%s\n", curr_word);
+		memset(&curr_word[0], 0, sizeof(curr_word));
 	}
 
 	// mix of everything[1%]
@@ -223,5 +245,6 @@ void mixOfNumLettersBruteForce(int rateOfOccurance)
 		}
 		curr_word[PASSWORD_LEN_SIX_LETTER] = '\0';
 		printf("%s\n", curr_word);
+		memset(&curr_word[0], 0, sizeof(curr_word));
 	}
 }

@@ -23,6 +23,14 @@
 #define PASSWORD_LEN_FOUR_LETTER 4
 #define PASSWORD_LEN_SIX_LETTER 6
 
+#define START_FIRST_GROUP_SYMBOLS 32
+#define START_SECOND_GROUP_SYMBOLS 58
+#define START_THIRD_GROUP_SYMBOLS 91
+#define START_FOURTH_GROUP_SYMBOLS 123
+#define START_POS_UPPERCASE 65
+#define START_POS_LOWERRCASE 97
+#define START_POS_NUMBERS 48
+
 #define PASSWORD_FILE_FOURWORDS "pwd4sha256"
 #define PASSWORD_FILE_SIXWORDS "pwd6sha256"
 #define COMMON_PASSWORDS "6_letters/common_passwords.txt"
@@ -96,19 +104,19 @@ void crack_oneargument(int number_guesses)
 			number_guesses--;
 			if (number_guesses == 0)
 			{
-				fclose(dictionary_common_passwords);
-				fclose(pwd6sha256);
 				//if all the guesses are found set flag as 0
 				flag = 0;
-
+				fclose(dictionary_common_passwords);
+				fclose(pwd6sha256);
 			}
 		}
 	}
 	
-	// if flag value is 0 means all the guesses are found, if its 1 it means we need to find more
+	// if flag value is 0 means all the guesses are found, if its 1 it means we need to make more
 	if(flag == 1){
 		//Dictionary Attack
 		FILE *files[10];
+
 		files[0] = fopen(DB_NAMES_MALE_LOWER, "r");
 		files[1] = fopen(DB_NAMES_MALE_UPPER, "r");
 		files[2] = fopen(DB_NAMES_FEMALE_LOWER, "r");
@@ -210,3 +218,4 @@ void crack_twoargument(char *guesses_file, char *hashes_file)
 	fclose(inputFile_guesses);
 	fclose(inputFile_hashes);
 }
+
