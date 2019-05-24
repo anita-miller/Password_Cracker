@@ -69,7 +69,7 @@ void crack_oneargument(int number_guesses)
 {
 	//int number_guesses = atoi(num_guesses);
 	char curr_word[MAX_WORD_LEN];
-
+	int flag = 1;
 	// Store the binary file as an array of hex values (for 6-chars passwords)
 	unsigned char six_letter_hashed_passwords[NUM_SIX_LETTERS_PASSWORDS][SHA256_BLOCK_SIZE];
 	
@@ -98,42 +98,51 @@ void crack_oneargument(int number_guesses)
 			{
 				fclose(dictionary_common_passwords);
 				fclose(pwd6sha256);
+				//if all the guesses are found set flag as 0
+				flag = 0;
+
 			}
 		}
 	}
 	
-	//Dictionary Attack
-	FILE *files[10];
-	files[0] = fopen(DB_NAMES_MALE_LOWER, "r");
-	files[1] = fopen(DB_NAMES_MALE_UPPER, "r");
-	files[2] = fopen(DB_NAMES_FEMALE_LOWER, "r");
-	files[3] = fopen(DB_NAMES_FEMALE_UPPER, "r");
-	files[4] = fopen(DB_1000_NOUNS_LOWER, "r");
-	files[5] = fopen(DB_1000_NOUNS_UPPER, "r");
-	files[6] = fopen(DB_1000_VERBS_LOWER, "r");
-	files[7] = fopen(DB_1000_VERBS_UPPER, "r");
-	files[8] = fopen(DB_1000_ADJEC_LOWER, "r");
-	files[9] = fopen(DB_1000_ADJEC_UPPER, "r");
+	// if flag value is 0 means all the guesses are found, if its 1 it means we need to find more
+	if(flag == 1){
+		//Dictionary Attack
+		FILE *files[10];
+		files[0] = fopen(DB_NAMES_MALE_LOWER, "r");
+		files[1] = fopen(DB_NAMES_MALE_UPPER, "r");
+		files[2] = fopen(DB_NAMES_FEMALE_LOWER, "r");
+		files[3] = fopen(DB_NAMES_FEMALE_UPPER, "r");
+		files[4] = fopen(DB_1000_NOUNS_LOWER, "r");
+		files[5] = fopen(DB_1000_NOUNS_UPPER, "r");
+		files[6] = fopen(DB_1000_VERBS_LOWER, "r");
+		files[7] = fopen(DB_1000_VERBS_UPPER, "r");
+		files[8] = fopen(DB_1000_ADJEC_LOWER, "r");
+		files[9] = fopen(DB_1000_ADJEC_UPPER, "r");
 
-	time_t seed_of_seed;
-	srand((unsigned)time(&seed_of_seed));
-	int seed = rand();
-	srand((unsigned)seed);
+		time_t seed_of_seed;
+		srand((unsigned)time(&seed_of_seed));
+		int seed = rand();
+		srand((unsigned)seed);
 
-	// giving each type of password explained in README a weight based on how popular they are
-	for (int i = 0; i < number_guesses; i++)
-	{
-		// craeting random value
-		int rateOfOccurance = rand() % 100;
+		// giving each type of password explained in README a weight based on how popular they are
+		for (int i = 0; i < number_guesses; i++)
+		{
+			// craeting random value
+			int rateOfOccurance = rand() % 100;
 
-		if (rateOfOccurance < 80){
-			dictionaryAttack(rateOfOccurance, files);
-		}
-		else{
-			//after dicionary attack we try mix of letteres and num using brute force
-			mixOfNumLettersBruteForce(rateOfOccurance);
+			if (rateOfOccurance < 80)
+			{
+				dictionaryAttack(rateOfOccurance, files);
+			}
+			else
+			{
+				//after dicionary attack we try mix of letteres and num using brute force
+				mixOfNumLettersBruteForce(rateOfOccurance);
+			}
 		}
 	}
+	
 }
 
 void crack_twoargument(char *guesses_file, char *hashes_file)

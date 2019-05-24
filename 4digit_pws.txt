@@ -28,11 +28,3 @@ tmdlge 26
 	   28
 porter 29
 	   30
-
-
-	   22
-
-
-	   name :
-	   noun: porter
-	   verb: cannot
