@@ -85,8 +85,9 @@ void crack_oneargument(int number_guesses)
 	while (fgets(curr_word, MAX_WORD_LEN, dictionary_common_passwords))
 	{
 		// Because fgets also gets the newline character, so we search for length 7 and cut the final \n char.
-		curr_word[PASSWORD_LEN_SIX_LETTER] = '\0';
-		printf("%s\n", curr_word);
+		curr_word[strlen(curr_word)-1] = '\0';
+		printf("%s", curr_word);
+		memset(&curr_word[0], 0, sizeof(curr_word));
 
 		// if reached the number specified then break;
 		number_guesses--;
@@ -137,7 +138,7 @@ void crack_oneargument(int number_guesses)
 				
 			}
 		}
-		printf("%d\n", number_guesses);
+		
 	}
 	
 }
