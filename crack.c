@@ -86,7 +86,7 @@ void crack_oneargument(int number_guesses)
 	{
 		// Because fgets also gets the newline character, so we search for length 7 and cut the final \n char.
 		curr_word[strlen(curr_word)-1] = '\0';
-		printf("%s", curr_word);
+		printf("%s\n", curr_word);
 		memset(&curr_word[0], 0, sizeof(curr_word));
 
 		// if reached the number specified then break;
