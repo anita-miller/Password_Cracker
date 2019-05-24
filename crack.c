@@ -102,6 +102,8 @@ void crack_oneargument(int number_guesses)
 	// if flag value is 0 means all the guesses are found, if its 1 it means we need to make more
 	if(flag == 1){
 		//Dictionary Attack
+
+		//open the databases and add to files array so we can pass them to other functions
 		FILE *files[10];
 
 		files[0] = fopen(DB_NAMES_MALE_LOWER, "r");

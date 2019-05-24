@@ -26,7 +26,6 @@
 void dictionaryAttack(int rateOfOccurance, FILE **files)
 {
 	char curr_word[MAX_WORD_LEN];
-	//opening dicitonary files
 	
 	// Case 1:  Nouns Lowercase -25%
 	if (rateOfOccurance >= 0 && rateOfOccurance < 25)
@@ -34,6 +33,7 @@ void dictionaryAttack(int rateOfOccurance, FILE **files)
 		// We will go through the dictionary one by one
 		fgets(curr_word, MAX_WORD_LEN, files[4]);
 		printf("%s", curr_word);
+		//reset the curr_word
 		memset(&curr_word[0], 0, sizeof(curr_word));
 	}
 
@@ -61,7 +61,7 @@ void dictionaryAttack(int rateOfOccurance, FILE **files)
 
 	else if (rateOfOccurance >= 48 && rateOfOccurance < 55)
 	{
-		// We will go through the dictionary one by one
+		// We will go through the dictionary one by one 
 		fgets(curr_word, MAX_WORD_LEN, files[2]);
 		printf("%s", curr_word);
 		memset(&curr_word[0], 0, sizeof(curr_word));
